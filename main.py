@@ -2,7 +2,6 @@ import telebot
 import webbrowser
 from telebot import types
 
-bot = telebot.TeleBot('5834721980:AAETRpHg8OYTtyca89Z3T5vZQXWkvuBkbO8')
 
 
 @bot.message_handler(commands=['start'])
