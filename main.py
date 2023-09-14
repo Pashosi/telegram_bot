@@ -1,7 +1,12 @@
 import telebot
 import webbrowser
+import os
 from telebot import types
+from dotenv import load_dotenv
 
+load_dotenv()
+token = os.getenv('TOKEN')
+bot = telebot.TeleBot(token)
 
 
 @bot.message_handler(commands=['start'])
