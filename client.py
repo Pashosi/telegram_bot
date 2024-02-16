@@ -21,19 +21,20 @@ def all_message(client: Client, message: Message):
     tu_table_list = []
 
     for i in text:
-        time.sleep(random.uniform(0.3, 2.3))  # случайный перерыв проверки
+        time.sleep(random.uniform(0.3, 1.3))  # случайный перерыв проверки
         try:
             client.get_users(i)
             mi_list.append(i)
             tu_table_list.append(i)
         except Exception:
             tu_table_list.append('нет')
-        if len(mi_list) == 4:
+        if len(mi_list) == 20:
             break
 
     message.reply('\n'.join(mi_list))
     if len(mi_list) != len(tu_table_list):
         message.reply('\n'.join(tu_table_list))
+    message.reply(len(mi_list))
     # message.reply(client.get_users('@al2151'))
 
 
