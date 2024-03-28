@@ -1,27 +1,65 @@
 import telebot
 import webbrowser
 import os
+import sqlite3
 from telebot import types
 from dotenv import load_dotenv
+
 
 load_dotenv()
 token = os.getenv('TOKEN')
 bot = telebot.TeleBot(token)
 
 
+name = None
 @bot.message_handler(commands=['start'])
 def start(message):
-    markup = types.ReplyKeyboardMarkup()
-    btn1 = types.KeyboardButton('перейти на сайт')
-    markup.row(btn1)
-    btn2 = types.KeyboardButton('удалить фото')
-    btn3 = types.KeyboardButton('изменить текст')
-    markup.row(btn2, btn3)
-    file = open('./photo.jpeg', 'rb')
-    bot.send_photo(message.chat.id, file, reply_markup=markup)
-    # bot.send_audio(message.chat.id, file, reply_markup=markup)
-    # bot.send_message(message.chat.id, 'Привет', reply_markup=markup)
-    bot.register_next_step_handler(message, on_click)
+    conn = sqlite3.connect('base_date.sql') #подключение к файлу
+    cur = conn.cursor()
+
+    cur.execute(
+        'CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR(50), password VARCHAR(50))')
+    conn.commit() #синхронизация
+    cur.close() #закрытие курсорв
+    conn.close() #закрытие файла
+
+    bot.send_message(message.chat.id, 'Привет, сейчас тебя зарегестрируем! Введи данные')
+    bot.register_next_step_handler(message, user_name)
+    # markup = types.ReplyKeyboardMarkup()
+    # btn1 = types.KeyboardButton('перейти на сайт')
+    # markup.row(btn1)
+    # btn2 = types.KeyboardButton('удалить фото')
+    # btn3 = types.KeyboardButton('изменить текст')
+    # markup.row(btn2, btn3)
+    # file = open('./photo.jpeg', 'rb')
+    # bot.send_photo(message.chat.id, file, reply_markup=markup)
+    # # bot.send_audio(message.chat.id, file, reply_markup=markup)
+    # # bot.send_message(message.chat.id, 'Привет', reply_markup=markup)
+    # bot.register_next_step_handler(message, on_click)
+
+
+def user_name(message):
+    global name
+    name = message.text.strip()
+    bot.send_message(message.chat.id, 'Введите пароль')
+    bot.register_next_step_handler(message, user_pass)
+
+
+def user_pass(message):
+     password = message.text.strip()
+     conn = sqlite3.connect('base_date.sql')
+     cur = conn.cursor()
+
+     cur.execute("INSERT INTO users (name, pass) VALUES (?, ?)", (name, password))
+     conn.commit()
+     cur.close()
+     conn.close()
+
+     markup = telebot.types.InlineKeyboardMarkup()
+     markup.add(telebot.types.InlineKeyboardButton('Список пользователей', callback_data='users'))
+     bot.send_message(message.chat.id, 'Пользователь зарегистрирован', reply_markup=markup)
+     # bot.send_message(message.chat.id, 'Введите пароль')
+     # bot.register_next_step_handler(message, user_name)
 
 
 def on_click(message):
