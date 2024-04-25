@@ -28,9 +28,9 @@ def all_message(client: Client, message: Message):
             print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
             # print(dir(client.get_users(i)))
         except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
-            print(ex.MESSAGE)
+            print(ex.MESSAGE, ex.CODE)
         except errors.exceptions.bad_request_400.UsernameInvalid as ex:
-            print(ex.MESSAGE)
+            print(ex.MESSAGE, ex.CODE)
         # except IndexError as ex:
         #     print(ex)
         # except KeyError as ex:
@@ -40,7 +40,7 @@ def all_message(client: Client, message: Message):
         # except errors.exceptions as ex:
         #     print(ex)
         except Exception as ex:
-            print(ex)
+            print(ex, ex.args)
 
         try:
             client.get_users(i)
@@ -48,7 +48,7 @@ def all_message(client: Client, message: Message):
             tu_table_list.append(i)
         except Exception:
             tu_table_list.append('нет')
-        if len(mi_list) == 22:
+        if len(mi_list) == 21:
             break
 
     if len(mi_list) > 0:
