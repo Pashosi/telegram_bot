@@ -5,6 +5,29 @@ import time
 import random
 from dotenv import load_dotenv
 import os
+import sqlite3 as sq
+from datetime import datetime
+
+
+# создание базы данных
+with sq.connect('tg_ex.db') as con:
+    cur = con.cursor()
+
+    cur.execute("""CREATE TABLE IF NOT EXISTS users (
+        date datetime,
+        count_id int
+        )""")
+
+def update_base(date: int):    #заносит дату и количество в базу
+    with sq.connect('tg_ex.db') as con:
+        cur = con.cursor()
+
+        data = datetime.now()
+        count = date
+
+        sql = "INSERT INTO users VALUES (?, ?)"
+        cur.execute(sql, (data, count))
+
 
 # Вставляем api_id и api_hash
 load_dotenv()
@@ -31,14 +54,6 @@ def all_message(client: Client, message: Message):
             print(ex.MESSAGE, ex.CODE)
         except errors.exceptions.bad_request_400.UsernameInvalid as ex:
             print(ex.MESSAGE, ex.CODE)
-        # except IndexError as ex:
-        #     print(ex)
-        # except KeyError as ex:
-        #     print(ex)
-        # except TypeError as ex:
-        #     print(ex)
-        # except errors.exceptions as ex:
-        #     print(ex)
         except Exception as ex:
             print(ex, ex.args)
 
@@ -56,6 +71,7 @@ def all_message(client: Client, message: Message):
         if len(mi_list) != len(tu_table_list):
             message.reply('\n'.join(tu_table_list))
         message.reply(f'первый список{len(mi_list)}, второй{len(tu_table_list)}')
+        update_base(len(tu_table_list))
     else:
         print('список после проверки пуст')
         message.reply('список после проверки пуст')
