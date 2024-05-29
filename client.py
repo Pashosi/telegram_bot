@@ -36,46 +36,62 @@ api_hash = os.getenv('API_HASH')
 
 client = Client(name='me_client', api_id=api_id, api_hash=api_hash)
 
-
+def get_greeting(num:int):
+    if isinstance(num, int) and 0<num<6:
+        greet_dict = {
+            1: ('Здравствуйте😊', 'Приветствую😊'),
+            2: ('Здравствуйте👋', 'Приветствую👋'),
+            3: ('Здравствуйте✌️', 'Приветствую✌️'),
+            4: ('Здравствуйте!', 'Приветствую😊'),
+            5: ('Здравствуйте👋', 'Приветствую✌️'),
+        }
+        return greet_dict[num]
+    return 'Нет такого приветствия'
 @client.on_message()  # декоратор хендлеров
 def all_message(client: Client, message: Message):
     text = message.text.split('\n')
     mi_list = []
     tu_table_list = []
+    check_greet = True
 
-    for i in text:
-        time.sleep(random.uniform(0.4, 2.3))  # случайный перерыв проверки
-        try:
-            # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
-            #       client.get_users(i).__getattribute__('id'))
-            print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
-            # print(dir(client.get_users(i)))
-        except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
-            print(ex.MESSAGE, ex.CODE)
-        except errors.exceptions.bad_request_400.UsernameInvalid as ex:
-            print(ex.MESSAGE, ex.CODE)
-        except Exception as ex:
-            print(ex, ex.args)
+    if text[0] in ['1', '2', '3', '4', '5']:
+        message.reply(get_greeting(int(text[0]))[0])
+        message.reply(get_greeting(int(text[0]))[1])
 
-        try:
-            client.get_users(i)
-            mi_list.append(i)
-            tu_table_list.append(i)
-        except Exception:
-            tu_table_list.append('нет')
-        if len(mi_list) == 21:
-            break
-
-    if len(mi_list) > 0:
-        message.reply('\n'.join(mi_list))
-        if len(mi_list) != len(tu_table_list):
-            message.reply('\n'.join(tu_table_list))
-        message.reply(f'первый список{len(mi_list)}, второй{len(tu_table_list)}')
-        update_base(len(tu_table_list))
     else:
-        print('список после проверки пуст')
-        message.reply('список после проверки пуст')
-    # message.reply(client.get_users('@al2151'))
+        for i in text:
+            time.sleep(random.uniform(0.4, 2.3))  # случайный перерыв проверки
+            try:
+                # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
+                #       client.get_users(i).__getattribute__('id'))
+                print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
+                # print(dir(client.get_users(i)))
+            except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
+                print(ex.MESSAGE, ex.CODE)
+            except errors.exceptions.bad_request_400.UsernameInvalid as ex:
+                print(ex.MESSAGE, ex.CODE)
+            except Exception as ex:
+                print(ex, ex.args)
+
+            try:
+                client.get_users(i)
+                mi_list.append(i)
+                tu_table_list.append(i)
+            except Exception:
+                tu_table_list.append('нет')
+            if len(mi_list) == 21:
+                break
+
+        if len(mi_list) > 0 and check_greet==True:
+            message.reply('\n'.join(mi_list))
+            if len(mi_list) != len(tu_table_list):
+                message.reply('\n'.join(tu_table_list))
+            message.reply(f'первый список{len(mi_list)}, второй{len(tu_table_list)}')
+            update_base(len(tu_table_list))
+        else:
+            print('список после проверки пуст')
+            message.reply('список после проверки пуст')
+        # message.reply(client.get_users('@al2151'))
 
 
 client.run()
