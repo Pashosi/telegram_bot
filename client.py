@@ -6,8 +6,7 @@ import random
 from dotenv import load_dotenv
 import os
 import sqlite3 as sq
-from datetime import datetime
-
+from datetime import datetime, timedelta
 
 # создание базы данных
 with sq.connect('tg_ex.db') as con:
@@ -31,8 +30,9 @@ def update_base(date: int):    #заносит дату и количество 
 def time_wait(sec):
     """Ожидание разблокироки из-за частых запросов. С переодичностью выводом на экран времени ожидания"""
     print(f'Ожидание={sec}сек')
+    wait_datatime = datetime.now() + timedelta(seconds=sec)
     for num in range(sec, 0, -5):
-        print(f'Осталось {num} сек, проверено {datetime.now()}')
+        print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
         time.sleep(sec-num)
     # time.sleep(sec)
 
@@ -56,6 +56,15 @@ def get_greeting(num:int):
         }
         return greet_dict[num]
     return 'Нет такого приветствия'
+
+
+def update_dog_text(nik: str):
+    """Добавление собаки в ник и удаление пробелов если не начин с @"""
+    if not nik.startswith('@'):
+        return f'@{"".join(nik.split())}'
+    return nik
+
+
 @client.on_message()  # декоратор хендлеров
 def all_message(client: Client, message: Message):
     text = message.text.split('\n')
@@ -81,15 +90,15 @@ def all_message(client: Client, message: Message):
                 print(ex.MESSAGE, ex.CODE)
             except Exception as ex:
                 print(ex)
-                if ex.value:
+                if hasattr(ex, 'value'):
                     time_wait(ex.value)
 
 
 
             try:
-                client.get_users(i)
-                mi_list.append(i)
-                tu_table_list.append(i)
+                client.get_users(update_dog_text(i))
+                mi_list.append(update_dog_text(i))
+                tu_table_list.append(update_dog_text(i))
             except Exception:
                 tu_table_list.append('нет')
             if len(mi_list) == 21:
