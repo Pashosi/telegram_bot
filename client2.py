@@ -46,7 +46,7 @@ api_hash = os.getenv('API_HASH_L')
 
 
 
-client = Client(name='me_client', api_id=api_id, api_hash=api_hash)
+client = Client(name='me_client_2', api_id=api_id, api_hash=api_hash)
 
 # print(client.__dict__)
 
@@ -93,10 +93,10 @@ def all_message(client: Client, message: Message):
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
                 print(ex.MESSAGE, ex.CODE)
-            except errors.exceptions.flood_420.FloodWait as ex:
+            except errors.exceptions.flood_420 as ex:
                 print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE)
             except Exception as ex:
-                print(ex.__dict__)
+                print(ex)
                 if hasattr(ex, 'value'):
                     time_wait(ex.value)
 
