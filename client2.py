@@ -106,7 +106,7 @@ def all_message(client: Client, message: Message):
                 tu_table_list.append(update_dog_text(i))
             except Exception:
                 tu_table_list.append('нет')
-            if len(mi_list) == 22:
+            if len(mi_list) == 23:
                 break
 
         if len(mi_list) > 0 and check_greet == True:

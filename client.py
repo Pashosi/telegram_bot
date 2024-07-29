@@ -94,7 +94,9 @@ def all_message(client: Client, message: Message):
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.flood_420.FloodWait as ex:
-                print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE)
+                print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE, ex.value)
+                if hasattr(ex, 'value'):
+                    time_wait(ex.value)
             except Exception as ex:
                 print(ex.__dict__)
                 if hasattr(ex, 'value'):
@@ -106,7 +108,7 @@ def all_message(client: Client, message: Message):
                 tu_table_list.append(update_dog_text(i))
             except Exception:
                 tu_table_list.append('нет')
-            if len(mi_list) == 22:
+            if len(mi_list) == 23:
                 break
 
         if len(mi_list) > 0 and check_greet == True:
