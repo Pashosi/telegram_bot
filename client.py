@@ -83,7 +83,7 @@ def all_message(client: Client, message: Message):
 
     else:
         for i in text:
-            time.sleep(random.uniform(0.6, 2.3))  # случайный перерыв проверки
+            time.sleep(random.uniform(0.9, 2.3))  # случайный перерыв проверки
             try:
                 # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
                 #       client.get_users(i).__getattribute__('id'))

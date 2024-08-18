@@ -93,8 +93,8 @@ def all_message(client: Client, message: Message):
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
                 print(ex.MESSAGE, ex.CODE)
-            except errors.exceptions.flood_420 as ex:
-                print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE)
+            # except errors.exceptions.flood_420 as ex:
+            #     print('Отлов ошибки за флуд') # , ex.ID, ex.MESSAGE)
             except Exception as ex:
                 print(ex)
                 if hasattr(ex, 'value'):
