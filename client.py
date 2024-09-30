@@ -44,9 +44,8 @@ load_dotenv()
 api_id = os.getenv('API_ID_L')
 api_hash = os.getenv('API_HASH_L')
 
-
-
 client = Client(name='me_client', api_id=api_id, api_hash=api_hash)
+
 
 # print(client.__dict__)
 
@@ -85,10 +84,7 @@ def all_message(client: Client, message: Message):
         for i in text:
             time.sleep(random.uniform(0.9, 2.3))  # случайный перерыв проверки
             try:
-                # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
-                #       client.get_users(i).__getattribute__('id'))
                 print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
-                # print(dir(client.get_users(i)))
             except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
@@ -120,7 +116,6 @@ def all_message(client: Client, message: Message):
         else:
             print('список после проверки пуст')
             message.reply('список после проверки пуст')
-        # message.reply(client.get_users('@al2151'))
 
 
 client.run()

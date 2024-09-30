@@ -36,7 +36,6 @@ def time_wait(sec):
     for num in range(sec, 0, -5):
         print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
         time.sleep(5)
-    # time.sleep(sec)
 
 
 # Вставляем api_id и api_hash
@@ -48,7 +47,6 @@ api_hash = os.getenv('API_HASH_L')
 
 client = Client(name='me_client_2', api_id=api_id, api_hash=api_hash)
 
-# print(client.__dict__)
 
 def get_greeting(num: int):
     if isinstance(num, int) and 0 < num < 6:
@@ -88,13 +86,11 @@ def all_message(client: Client, message: Message):
                 # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
                 #       client.get_users(i).__getattribute__('id'))
                 print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
-                # print(dir(client.get_users(i)))
             except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
                 print(ex.MESSAGE, ex.CODE)
             # except errors.exceptions.flood_420 as ex:
-            #     print('Отлов ошибки за флуд') # , ex.ID, ex.MESSAGE)
             except Exception as ex:
                 print(ex)
                 if hasattr(ex, 'value'):
@@ -118,7 +114,6 @@ def all_message(client: Client, message: Message):
         else:
             print('список после проверки пуст')
             message.reply('список после проверки пуст')
-        # message.reply(client.get_users('@al2151'))
 
 
 client.run()
