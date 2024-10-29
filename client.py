@@ -33,10 +33,20 @@ def time_wait(sec):
     """Ожидание разблокироки из-за частых запросов. С переодичностью выводом на экран времени ожидания"""
     print(f'Ожидание={sec}сек')
     wait_datatime = datetime.now() + timedelta(seconds=sec)
-    for num in range(sec, 0, -5):
-        print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
-        time.sleep(5)
-    # time.sleep(sec)
+    if sec > 600:
+        start_another_client('client2')
+    else:
+        for num in range(sec, 0, -5):
+            print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
+            time.sleep(5)
+
+
+def start_another_client(client):
+    """Закрытие клиента и запуск нового"""
+    os.system('^C')
+    print('Клиент закрыт. Запуск нового')
+    os.system(f'python {client}.py')
+    print('Новый клиент запущен')
 
 
 # Вставляем api_id и api_hash
@@ -107,7 +117,7 @@ def all_message(client: Client, message: Message):
             if len(mi_list) == 23:
                 break
 
-        if len(mi_list) > 0 and check_greet == True:
+        if len(mi_list) > 0 and check_greet:
             message.reply('\n'.join(mi_list))
             if len(mi_list) != len(tu_table_list):
                 message.reply('\n'.join(tu_table_list))
@@ -118,4 +128,5 @@ def all_message(client: Client, message: Message):
             message.reply('список после проверки пуст')
 
 
-client.run()
+if __name__ == '__main__':
+    client.run()
