@@ -1,4 +1,5 @@
 from pyrogram import Client, errors
+from pyrogram.enums import ChatAction
 from pyrogram.handlers import MessageHandler
 from pyrogram.types import Message
 import time
@@ -90,6 +91,9 @@ def all_message(client: Client, message: Message):
     mi_list = []
     tu_table_list = []
     check_greet = True
+
+    # Показываем "Бот печатает..."
+    client.send_chat_action(message.chat.id, ChatAction.TYPING)
 
     if text[0] in ['1', '2', '3', '4', '5']:
         message.reply(get_greeting(int(text[0]))[0])
