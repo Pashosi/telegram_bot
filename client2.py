@@ -29,16 +29,20 @@ def update_base(date: int):  # заносит дату и количество �
         cur.execute(sql, (data, count))
 
 
-def time_wait(sec):
+def time_wait(sec, message: Message):
     """Ожидание разблокироки из-за частых запросов. С переодичностью выводом на экран времени ожидания"""
     print(f'Ожидание={sec}сек')
     wait_datatime = datetime.now() + timedelta(seconds=sec)
     if sec > 600:
-        start_another_client('client')
+        # start_another_client('client2')
+        message.reply(f"Лучше переключиться на другой акк, ожидание более 10 минут ({sec}сек)")
+        return None
     else:
-        for num in range(sec, 0, -5):
+        period:int = int(sec/4)
+        for num in range(sec, 0, -period):
             print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
-            time.sleep(5)
+            message.reply(f"Блокировка. Ожидать {num}сек")
+            time.sleep(period)
 
 
 def start_another_client(client):
@@ -51,10 +55,13 @@ def start_another_client(client):
 
 # Вставляем api_id и api_hash
 load_dotenv()
-api_id = os.getenv('API_ID_L')
-api_hash = os.getenv('API_HASH_L')
+api_id = os.getenv('API_ID_3')
+api_hash = os.getenv('API_HASH_3')
+api_name = os.getenv('API_LOGIN_3')
+api_phone = os.getenv('API_PHONE_3')
 
-client = Client(name='me_client_2', api_id=api_id, api_hash=api_hash)
+client_2 = Client(name=api_name, api_id=api_id, api_hash=api_hash, phone_number=api_phone)
+print("Запущен бот")
 
 
 def get_greeting(num: int):
@@ -77,7 +84,7 @@ def update_dog_text(nik: str):
     return nik
 
 
-@client.on_message()  # декоратор хендлеров
+@client_2.on_message()  # декоратор хендлеров
 def all_message(client: Client, message: Message):
     text = message.text.split('\n')
     mi_list = []
@@ -90,20 +97,21 @@ def all_message(client: Client, message: Message):
 
     else:
         for i in text:
-            time.sleep(random.uniform(0.6, 2.3))  # случайный перерыв проверки
+            time.sleep(random.uniform(0.9, 2.3))  # случайный перерыв проверки
             try:
-                # print(len(mi_list)+1, f'"{client.get_users(i).__getattribute__("username")}"',
-                #       client.get_users(i).__getattribute__('id'))
                 print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
             except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
                 print(ex.MESSAGE, ex.CODE)
             except errors.exceptions.bad_request_400.UsernameInvalid as ex:
                 print(ex.MESSAGE, ex.CODE)
-            # except errors.exceptions.flood_420 as ex:
-            except Exception as ex:
-                print(ex)
+            except errors.exceptions.flood_420.FloodWait as ex:
+                print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE, ex.value)
                 if hasattr(ex, 'value'):
-                    time_wait(ex.value)
+                    time_wait(ex.value, message)
+            except Exception as ex:
+                print(ex.__dict__)
+                if hasattr(ex, 'value'):
+                    time_wait(ex.value, message)
 
             try:
                 client.get_users(update_dog_text(i))
@@ -125,4 +133,5 @@ def all_message(client: Client, message: Message):
             message.reply('список после проверки пуст')
 
 
-client.run()
+
+client_2.run()

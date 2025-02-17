@@ -29,16 +29,20 @@ def update_base(date: int):  # заносит дату и количество �
         cur.execute(sql, (data, count))
 
 
-def time_wait(sec):
+def time_wait(sec, message: Message):
     """Ожидание разблокироки из-за частых запросов. С переодичностью выводом на экран времени ожидания"""
     print(f'Ожидание={sec}сек')
     wait_datatime = datetime.now() + timedelta(seconds=sec)
     if sec > 600:
-        start_another_client('client2')
+        # start_another_client('client2')
+        message.reply(f"Лучше переключиться на другой акк, ожидание более 10 минут ({sec}сек)")
+        return None
     else:
-        for num in range(sec, 0, -5):
+        period:int = int(sec/4)
+        for num in range(sec, 0, -period):
             print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
-            time.sleep(5)
+            message.reply(f"Блокировка. Ожидать {num}сек")
+            time.sleep(period)
 
 
 def start_another_client(client):
@@ -55,6 +59,7 @@ api_id = os.getenv('API_ID_L')
 api_hash = os.getenv('API_HASH_L')
 
 client = Client(name='me_client', api_id=api_id, api_hash=api_hash)
+print("Бот запущен")
 
 
 # print(client.__dict__)
@@ -102,11 +107,11 @@ def all_message(client: Client, message: Message):
             except errors.exceptions.flood_420.FloodWait as ex:
                 print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE, ex.value)
                 if hasattr(ex, 'value'):
-                    time_wait(ex.value)
+                    time_wait(ex.value, message)
             except Exception as ex:
                 print(ex.__dict__)
                 if hasattr(ex, 'value'):
-                    time_wait(ex.value)
+                    time_wait(ex.value, message)
 
             try:
                 client.get_users(update_dog_text(i))
