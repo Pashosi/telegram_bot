@@ -37,13 +37,14 @@ def time_wait(sec, message: Message):
     if sec > 600:
         # start_another_client('client2')
         message.reply(f"Лучше переключиться на другой акк, ожидание более 10 минут ({sec}сек)")
-        return None
+        return False
     else:
-        period:int = int(sec/4)
+        period: int = int(sec / 4)
         for num in range(sec, 0, -period):
             print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
             message.reply(f"Блокировка. Ожидать {num}сек")
             time.sleep(period)
+            return True
 
 
 def start_another_client(client):
@@ -91,9 +92,9 @@ def all_message(client: Client, message: Message):
     mi_list = []
     tu_table_list = []
     check_greet = True
+    chat_id = message.chat.id
 
-    # Показываем "Бот печатает..."
-    client.send_chat_action(message.chat.id, ChatAction.TYPING)
+    start_time = time.time()  # Запоминаем время начала работы
 
     if text[0] in ['1', '2', '3', '4', '5']:
         message.reply(get_greeting(int(text[0]))[0])
@@ -101,7 +102,13 @@ def all_message(client: Client, message: Message):
 
     else:
         for i in text:
+            # Обновляем "печатает..." каждые 5 секунд
+            if time.time() - start_time > 5:
+                client.send_chat_action(chat_id, ChatAction.TYPING)
+                start_time = time.time()  # Обновляем таймер
+
             time.sleep(random.uniform(0.9, 2.3))  # случайный перерыв проверки
+
             try:
                 print(len(mi_list) + 1, client.get_users(i).username, client.get_users(i).id)
             except errors.exceptions.bad_request_400.UsernameNotOccupied as ex:
@@ -111,11 +118,15 @@ def all_message(client: Client, message: Message):
             except errors.exceptions.flood_420.FloodWait as ex:
                 print('Отлов ошибки за флуд', ex.ID, ex.MESSAGE, ex.value)
                 if hasattr(ex, 'value'):
-                    time_wait(ex.value, message)
+                    result = time_wait(ex.value, message)
+                    if not result:
+                        break
             except Exception as ex:
                 print(ex.__dict__)
                 if hasattr(ex, 'value'):
-                    time_wait(ex.value, message)
+                    result = time_wait(ex.value, message)
+                    if not result:
+                        break
 
             try:
                 client.get_users(update_dog_text(i))
