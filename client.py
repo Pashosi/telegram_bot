@@ -44,7 +44,7 @@ def time_wait(sec, message: Message):
             print(f'Осталось {num} сек, проверено {datetime.now()}, будет все готово в {wait_datatime}')
             message.reply(f"Блокировка. Ожидать {num}сек")
             time.sleep(period)
-            return True
+        return True
 
 
 def start_another_client(client):
@@ -94,6 +94,9 @@ def all_message(client: Client, message: Message):
     check_greet = True
     chat_id = message.chat.id
 
+    # Показываем "Бот печатает..."
+    client.send_chat_action(message.chat.id, ChatAction.TYPING)
+
     start_time = time.time()  # Запоминаем время начала работы
 
     if text[0] in ['1', '2', '3', '4', '5']:
@@ -102,8 +105,8 @@ def all_message(client: Client, message: Message):
 
     else:
         for i in text:
-            # Обновляем "печатает..." каждые 5 секунд
-            if time.time() - start_time > 5:
+            # Обновляем "печатает..." каждые 4 секунд
+            if time.time() - start_time > 4:
                 client.send_chat_action(chat_id, ChatAction.TYPING)
                 start_time = time.time()  # Обновляем таймер
 
