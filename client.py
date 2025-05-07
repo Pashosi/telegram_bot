@@ -59,8 +59,8 @@ def start_another_client(client):
 load_dotenv()
 api_id = os.getenv('API_ID_L')
 api_hash = os.getenv('API_HASH_L')
-
-client = Client(name='me_client', api_id=api_id, api_hash=api_hash)
+api_name = os.getenv('API_LOGIN')
+client = Client(name=api_name, api_id=api_id, api_hash=api_hash)
 print("Бот запущен")
 
 
